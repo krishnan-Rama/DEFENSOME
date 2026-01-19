@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparative Defensome Analysis Dashboard v2</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-violet: '#8b5cf6;
+            --border-color: #374151;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle { color: var(--text-secondary); font-size: 0.9rem; }
+        
+        .main-container {
+            max-width: 1900px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+        }
+        
+        .file-upload-section {
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .file-upload-section.loaded {
+            border-style: solid;
+            border-color: var(--accent-emerald);
+            background: rgba(16, 185, 129, 0.05);
+        }
+        
+        .file-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .file-input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+        }
+        
+        .file-input-group input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+        }
+        
+        .load-btn {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .load-btn:hover { transform: translateY(-2px); }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+        
+        .status-dot.success { background: var(--accent-emerald); }
+        .status-dot.loading { background: var(--accent-amber); animation: pulse 1s infinite; }
+        .status-dot.error { background: var(--accent-rose); }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        .dashboard-content { display: none; }
+        .dashboard-content.visible { display: block; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--accent-cyan);
+        }
+        
+        .stat-label { font-size: 0.8rem; color: var(--text-secondary); }
+        
+        .section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .section-title { font-size: 1rem; font-weight: 600; }
+        
+        .section-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .control-label { font-size: 0.75rem; color: var(--text-secondary); }
+        
+        select {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 0.4rem 0.6rem;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+        }
+        
+        .section-content {
+            padding: 1.25rem;
+            overflow-x: auto;
+        }
+        
+        .heatmap-container { min-width: 1000px; }
+        
+        .legend-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .legend-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        
+        .legend-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .legend-items { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--text-secondary);
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .tooltip {
+            position: fixed;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 300px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        
+        .tooltip.visible { opacity: 1; }
+        
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--accent-cyan);
+        }
+        
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.8rem;
+            padding: 0.2rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tooltip-row:last-child { border-bottom: none; }
+        .tooltip-label { color: var(--text-secondary); }
+        .tooltip-value { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+        
+        .tabs {
+            display: flex;
+            gap: 0.3rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 0.6rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .tab:hover { color: var(--text-primary); background: var(--bg-tertiary); }
+        .tab.active { color: var(--accent-cyan); background: var(--bg-tertiary); border-bottom: 2px solid var(--accent-cyan); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .download-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .download-btn:hover { background: var(--accent-blue); border-color: var(--accent-blue); color: white; }
+        
+        .cell { cursor: pointer; transition: opacity 0.1s; }
+        .cell:hover { opacity: 0.8; stroke: white; stroke-width: 1.5; }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        
+        .summary-table th, .summary-table td {
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .summary-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+        }
+        
+        .summary-table tr:hover td { background: rgba(6, 182, 212, 0.05); }
+        
+        .bar-mini {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+            overflow: hidden;
+        }
+        
+        .bar-mini-fill { height: 100%; border-radius: 4px; }
+        
+        .conservation-badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .conservation-badge.conserved { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .conservation-badge.expanded { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .conservation-badge.other { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
+        
+        .table-container { max-height: 500px; overflow-y: auto; }
+        
+        .info-box {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-cyan);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .info-box h4 { color: var(--accent-cyan); margin-bottom: 0.5rem; }
+        
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 1200px) {
+            .grid-2col { grid-template-columns: 1fr; }
+        }
+        
+        .phylo-tree-container {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <h1>Comparative Defensome Analysis Dashboard</h1>
+        <p class="subtitle">Lepidoptera chemical defense gene family evolution and conservation</p>
+    </header>
+    
+    <main class="main-container">
+        <section class="file-upload-section" id="uploadSection">
+            <h2 style="font-size: 1.1rem; margin-bottom: 0.3rem;">Load Analysis Data</h2>
+            <p class="subtitle">Upload your defensome analysis TSV files</p>
+            
+            <div class="file-inputs">
+                <div class="file-input-group">
+                    <label>Protein Calls with Orthogroups *</label>
+                    <input type="file" id="proteinCallsFile" accept=".tsv,.txt">
+                </div>
+                <div class="file-input-group">
+                    <label>Species Taxonomy *</label>
+                    <input type="file" id="taxonomyFile" accept=".tsv,.txt">
+                </div>
+                <div class="file-input-group">
+                    <label>Orthogroup Statistics</label>
+                    <input type="file" id="ogStatsFile" accept=".tsv,.txt">
+                </div>
+                <div class="file-input-group">
+                    <label>Orthogroup Labels</label>
+                    <input type="file" id="ogLabelsFile" accept=".tsv,.txt">
+                </div>
+                <div class="file-input-group">
+                    <label>Pfam Mapping *</label>
+                    <input type="file" id="pfamMapFile" accept=".tsv,.txt">
+                </div>
+            </div>
+            
+            <button class="load-btn" id="loadDataBtn" onclick="loadData()">Generate Analysis</button>
+            
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Waiting for files...</span>
+            </div>
+        </section>
+        
+        <div class="dashboard-content" id="dashboardContent">
+            <div class="stats-grid" id="statsGrid"></div>
+            
+            <div class="tabs">
+                <button class="tab active" data-tab="heatmap">Main Heatmap</button>
+                <button class="tab" data-tab="phylo">Phylogenetic View</button>
+                <button class="tab" data-tab="taxonomy">Taxonomy Analysis</button>
+                <button class="tab" data-tab="conservation">Conservation</button>
+                <button class="tab" data-tab="families">Family Stats</button>
+                <button class="tab" data-tab="orthogroups">Orthogroups</button>
+            </div>
+            
+            <!-- Main Heatmap Tab -->
+            <div class="tab-content active" id="heatmap-tab">
+                <section class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Species × Defensome Family Copy Number</h3>
+                        <div class="section-controls">
+                            <div class="control-group">
+                                <span class="control-label">Scale:</span>
+                                <select id="colorScaleSelect" onchange="renderMainHeatmap()">
+                                    <option value="log">Log</option>
+                                    <option value="linear">Linear</option>
+                                    <option value="sqrt">Sqrt</option>
+                                </select>
+                            </div>
+                            <button class="download-btn" onclick="downloadSVG('mainHeatmapSVG', 'defensome_heatmap')">⬇ SVG</button>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="legend-container" id="mainLegend"></div>
+                        <div class="heatmap-container" id="mainHeatmap"></div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Phylogenetic View Tab -->
+            <div class="tab-content" id="phylo-tab">
+                <div class="info-box">
+                    <h4>Phylogenetic Defensome Analysis</h4>
+                    <p>Species are arranged by inferred phylogenetic relationships based on taxonomic hierarchy (Order → Family → Genus). 
+                    Branch lengths are illustrative only. For precise phylogenetic placement, integrate with your OrthoFinder species tree.</p>
+                </div>
+                
+                <section class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Phylogeny-Mapped Defensome Heatmap</h3>
+                        <div class="section-controls">
+                            <div class="control-group">
+                                <span class="control-label">Category:</span>
+                                <select id="phyloCategorySelect" onchange="renderPhyloHeatmap()">
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+                            <button class="download-btn" onclick="downloadSVG('phyloHeatmapSVG', 'phylo_heatmap')">⬇ SVG</button>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div id="phyloHeatmap"></div>
+                    </div>
+                </section>
+                
+                <section class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Defensome Size by Phylogenetic Position</h3>
+                    </div>
+                    <div class="section-content">
+                        <div id="phyloBarChart"></div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Taxonomy Analysis Tab -->
+            <div class="tab-content" id="taxonomy-tab">
+                <div class="info-box">
+                    <h4>Conservation Label Definitions</h4>
+                    <p><strong>Conserved:</strong> Orthogroups present in ≥80% of species with median copy ~1 and max ≤2. These represent stable, single-copy genes under purifying selection.<br>
+                    <strong>Expanded:</strong> Orthogroups with max copy ≥5 in at least one species. These show lineage-specific duplications, potentially adaptive.<br>
+                    <strong>Other:</strong> Variable orthogroups not meeting either criterion.</p>
+                </div>
+                
+                <div class="grid-2col">
+                    <section class="section">
+                        <div class="section-header">
+                            <h3 class="section-title">Defensome Size by Taxonomic Family</h3>
+                        </div>
+                        <div class="section-content">
+                            <div id="taxFamilyBarChart"></div>
+                        </div>
+                    </section>
+                    
+                    <section class="section">
+                        <div class="section-header">
+                            <h3 class="section-title">Category Proportions by Taxonomy</h3>
+                        </div>
+                        <div class="section-content">
+                            <div id="taxCategoryStackedChart"></div>
+                        </div>
+                    </section>
+                </div>
+                
+                <section class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Taxonomy-Specific Conservation Patterns</h3>
+                        <div class="section-controls">
+                            <div class="control-group">
+                                <span class="control-label">Family:</span>
+                                <select id="taxConservationFamilySelect" onchange="renderTaxConservation()">
+                                    <option value="all">All families</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div id="taxConservationHeatmap"></div>
+                    </div>
+                </section>
+                
+                <section class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Lepidoptera vs Outgroup Comparison</h3>
+                    </div>
+                    <div class="section-content">
+                        <div id="lepVsOutgroupChart"></div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Conservation Tab -->
+            <div class="tab-content" id="conservation-tab">
+                <div class="grid-2col">
+                    <section class="section">
+                        <div class="section-header">
+                            <h3 class="section-title">Orthogroup Conservation Landscape</h3>
+                        </div>
+                        <div class="section-content">
+                            <div id="conservationScatter"></div>
+                        </div>
+                    </section>
+                    
+                    <section class="section">
+                        <div class="section-header">
+                            <h3 class="section-title">Conservation by Defensome Family</h3>
+                        </div>
+                        <div class="section-content">
+                            <div id="conservationStackedBar"></div>
+                        </div>
+                    </section>
+                </div>
+                
+                <section class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Core vs Accessory Defensome</h3>
+                    </div>
+                    <div class="section-content">
+                        <div id="coreAccessoryChart"></div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Family Stats Tab -->
+            <div class="tab-content" id="families-tab">
+                <section class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Defensome Family Statistics</h3>
+                        <button class="download-btn" onclick="downloadCSV('familyStats')">⬇ CSV</button>
+                    </div>
+                    <div class="section-content">
+                        <div class="table-container">
+                            <table class="summary-table" id="familyStatsTable"></table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Orthogroups Tab -->
+            <div class="tab-content" id="orthogroups-tab">
+                <section class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Orthogroup Details</h3>
+                        <div class="section-controls">
+                            <div class="control-group">
+                                <span class="control-label">Family:</span>
+                                <select id="ogFamilyFilter" onchange="updateOGTable()">
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <span class="control-label">Label:</span>
+                                <select id="ogLabelFilter" onchange="updateOGTable()">
+                                    <option value="all">All</option>
+                                    <option value="conserved">Conserved</option>
+                                    <option value="expanded">Expanded</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <button class="download-btn" onclick="downloadCSV('ogDetails')">⬇ CSV</button>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="table-container" style="max-height: 600px;">
+                            <table class="summary-table" id="ogDetailsTable"></table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+    // Global data
+    let DATA = { processed: {} };
+    
+    // Category order (fixed)
+    const CATEGORY_ORDER = ['Phase0_Regulation', 'PhaseI', 'PhaseII', 'PhaseIII', 'OxStress', 'RedoxSupport'];
+    
+    const COLORS = {
+        categories: {
+            'Phase0_Regulation': '#8b5cf6',
+            'PhaseI': '#3b82f6',
+            'PhaseII': '#10b981',
+            'PhaseIII': '#f59e0b',
+            'OxStress': '#ef4444',
+            'RedoxSupport': '#06b6d4'
+        },
+        taxFamilies: {
+            'Geometridae': '#f472b6',
+            'Noctuidae': '#60a5fa',
+            'Pieridae': '#34d399',
+            'Nymphalidae': '#fbbf24',
+            'Lycaenidae': '#a78bfa',
+            'Erebidae': '#fb923c',
+            'Hesperiidae': '#2dd4bf',
+            'Sphingidae': '#f87171',
+            'Plutellidae': '#818cf8',
+            'Apidae': '#4ade80',
+            'Drosophilidae': '#f9a8d4'
+        },
+        heatmap: d3.interpolateYlOrRd,
+        conservation: {
+            'conserved': '#10b981',
+            'expanded': '#f59e0b',
+            'other': '#6b7280'
+        }
+    };
+    
+    function loadData() {
+        const files = {
+            proteinCalls: document.getElementById('proteinCallsFile').files[0],
+            taxonomy: document.getElementById('taxonomyFile').files[0],
+            ogStats: document.getElementById('ogStatsFile').files[0],
+            ogLabels: document.getElementById('ogLabelsFile').files[0],
+            pfamMap: document.getElementById('pfamMapFile').files[0]
+        };
+        
+        const required = ['proteinCalls', 'taxonomy', 'pfamMap'];
+        const missing = required.filter(k => !files[k]);
+        if (missing.length > 0) {
+            updateStatus('error', `Missing required files: ${missing.join(', ')}`);
+            return;
+        }
+        
+        updateStatus('loading', 'Loading data...');
+        
+        const loadPromises = Object.entries(files).filter(([k, v]) => v).map(([key, file]) => {
+            return new Promise((resolve, reject) => {
+                Papa.parse(file, {
+                    delimiter: '\t',
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        DATA[key] = results.data;
+                        resolve();
+                    },
+                    error: reject
+                });
+            });
+        });
+        
+        Promise.all(loadPromises)
+            .then(() => {
+                processData();
+                renderDashboard();
+                updateStatus('success', 'Data loaded!');
+                document.getElementById('uploadSection').classList.add('loaded');
+                document.getElementById('dashboardContent').classList.add('visible');
+            })
+            .catch(err => updateStatus('error', `Error: ${err.message}`));
+    }
+    
+    function updateStatus(state, message) {
+        document.getElementById('statusDot').className = 'status-dot ' + state;
+        document.getElementById('statusText').textContent = message;
+    }
+    
+    function processData() {
+        // Build pfam category mapping
+        const pfamCategories = {};
+        DATA.pfamMap.forEach(row => {
+            const catCol = Object.keys(row).find(k => k.toLowerCase().includes('category'));
+            if (row.family && catCol && row[catCol]) {
+                pfamCategories[row.family] = row[catCol];
+            }
+        });
+        
+        const species = [...new Set(DATA.proteinCalls.map(d => d.species))].filter(s => s);
+        const families = [...new Set(DATA.proteinCalls.map(d => d.family))].filter(f => f);
+        
+        // Taxonomy lookup
+        const taxLookup = {};
+        DATA.taxonomy.forEach(row => { taxLookup[row.species] = row; });
+        
+        // OG labels lookup
+        const ogLabelsLookup = {};
+        if (DATA.ogLabels) {
+            DATA.ogLabels.forEach(row => {
+                ogLabelsLookup[`${row.family}_${row.orthogroup}`] = row.label || 'other';
+            });
+        }
+        
+        // Calculate counts
+        const speciesFamilyCounts = {};
+        species.forEach(sp => {
+            speciesFamilyCounts[sp] = {};
+            families.forEach(fam => { speciesFamilyCounts[sp][fam] = 0; });
+        });
+        DATA.proteinCalls.forEach(row => {
+            if (row.species && row.family) speciesFamilyCounts[row.species][row.family]++;
+        });
+        
+        // Sort species by taxonomy (outgroups first, then by family)
+        const speciesSorted = species.sort((a, b) => {
+            const taxA = taxLookup[a] || {};
+            const taxB = taxLookup[b] || {};
+            // Outgroups first
+            const orderA = taxA.tax_order || 'ZZZ';
+            const orderB = taxB.tax_order || 'ZZZ';
+            if (orderA !== 'Lepidoptera' && orderB === 'Lepidoptera') return -1;
+            if (orderA === 'Lepidoptera' && orderB !== 'Lepidoptera') return 1;
+            // Then by taxonomic family
+            const famComp = (taxA.tax_family || '').localeCompare(taxB.tax_family || '');
+            if (famComp !== 0) return famComp;
+            return a.localeCompare(b);
+        });
+        
+        // Sort families by category (using fixed order) then by name
+        const familiesSorted = families.sort((a, b) => {
+            const catA = pfamCategories[a] || 'ZZZ';
+            const catB = pfamCategories[b] || 'ZZZ';
+            const idxA = CATEGORY_ORDER.indexOf(catA);
+            const idxB = CATEGORY_ORDER.indexOf(catB);
+            const orderA = idxA >= 0 ? idxA : 99;
+            const orderB = idxB >= 0 ? idxB : 99;
+            if (orderA !== orderB) return orderA - orderB;
+            return a.localeCompare(b);
+        });
+        
+        // Family stats
+        const familyStats = {};
+        familiesSorted.forEach(fam => {
+            const counts = speciesSorted.map(sp => speciesFamilyCounts[sp][fam]);
+            familyStats[fam] = {
+                category: pfamCategories[fam] || 'Unknown',
+                total: d3.sum(counts),
+                mean: d3.mean(counts),
+                median: d3.median(counts),
+                min: d3.min(counts),
+                max: d3.max(counts),
+                speciesPresent: counts.filter(c => c > 0).length,
+                presenceFrac: counts.filter(c => c > 0).length / speciesSorted.length
+            };
+        });
+        
+        // Species stats
+        const speciesStats = {};
+        speciesSorted.forEach(sp => {
+            const tax = taxLookup[sp] || {};
+            const categoryTotals = {};
+            familiesSorted.forEach(fam => {
+                const cat = pfamCategories[fam] || 'Unknown';
+                categoryTotals[cat] = (categoryTotals[cat] || 0) + speciesFamilyCounts[sp][fam];
+            });
+            speciesStats[sp] = {
+                taxFamily: tax.tax_family || 'Unknown',
+                taxOrder: tax.tax_order || 'Unknown',
+                total: d3.sum(familiesSorted.map(f => speciesFamilyCounts[sp][f])),
+                categoryBreakdown: categoryTotals
+            };
+        });
+        
+        // OG data
+        const ogData = [];
+        if (DATA.ogStats) {
+            DATA.ogStats.forEach(row => {
+                const key = `${row.family}_${row.orthogroup}`;
+                ogData.push({
+                    family: row.family,
+                    orthogroup: row.orthogroup,
+                    category: pfamCategories[row.family] || 'Unknown',
+                    label: ogLabelsLookup[key] || 'other',
+                    presenceSpecies: +row.presence_species || 0,
+                    presenceFrac: +row.presence_frac || 0,
+                    medianCopy: +row.median_copy || 0,
+                    maxCopy: +row.max_copy || 0,
+                    meanCopy: +row.mean_copy || 0,
+                    varCopy: +row.var_copy || 0
+                });
+            });
+        }
+        
+        DATA.processed = {
+            species: speciesSorted,
+            families: familiesSorted,
+            taxLookup,
+            pfamCategories,
+            speciesFamilyCounts,
+            familyStats,
+            speciesStats,
+            ogData,
+            ogLabelsLookup,
+            maxCount: d3.max(speciesSorted.flatMap(sp => familiesSorted.map(fam => speciesFamilyCounts[sp][fam])))
+        };
+    }
+    
+    function renderDashboard() {
+        renderStats();
+        renderMainHeatmap();
+        renderPhyloHeatmap();
+        renderPhyloBarChart();
+        renderTaxonomyCharts();
+        renderConservationCharts();
+        renderFamilyStats();
+        renderOGDetails();
+        populateFilters();
+        setupEventListeners();
+    }
+    
+    function renderStats() {
+        const { species, families, ogData, pfamCategories } = DATA.processed;
+        const totalProteins = DATA.proteinCalls.length;
+        const categories = [...new Set(Object.values(pfamCategories))];
+        const conservedOGs = ogData.filter(d => d.label === 'conserved').length;
+        const expandedOGs = ogData.filter(d => d.label === 'expanded').length;
+        const lepSpecies = species.filter(sp => DATA.processed.speciesStats[sp].taxOrder === 'Lepidoptera').length;
+        
+        const stats = [
+            { value: species.length, label: 'Species' },
+            { value: lepSpecies, label: 'Lepidoptera' },
+            { value: families.length, label: 'Defensome families' },
+            { value: totalProteins.toLocaleString(), label: 'Protein calls' },
+            { value: conservedOGs, label: 'Conserved OGs' },
+            { value: expandedOGs, label: 'Expanded OGs' }
+        ];
+        
+        document.getElementById('statsGrid').innerHTML = stats.map(s => `
+            <div class="stat-card">
+                <div class="stat-value">${s.value}</div>
+                <div class="stat-label">${s.label}</div>
+            </div>
+        `).join('');
+    }
+    
+    function renderMainHeatmap() {
+        const { species, families, taxLookup, pfamCategories, speciesFamilyCounts, maxCount } = DATA.processed;
+        const container = document.getElementById('mainHeatmap');
+        container.innerHTML = '';
+        
+        // Dimensions - increased margins for labels
+        const margin = { top: 180, right: 50, bottom: 30, left: 200 };
+        const cellWidth = 20;
+        const cellHeight = 13;
+        const width = margin.left + families.length * cellWidth + margin.right;
+        const height = margin.top + species.length * cellHeight + margin.bottom;
+        
+        const svg = d3.select(container).append('svg')
+            .attr('width', width).attr('height', height).attr('id', 'mainHeatmapSVG');
+        
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        
+        // Color scale
+        const scaleType = document.getElementById('colorScaleSelect')?.value || 'log';
+        let colorScale;
+        if (scaleType === 'log') {
+            colorScale = d3.scaleSequential(COLORS.heatmap).domain([0, Math.log10(maxCount + 1)]);
+        } else if (scaleType === 'sqrt') {
+            colorScale = d3.scaleSequential(COLORS.heatmap).domain([0, Math.sqrt(maxCount)]);
+        } else {
+            colorScale = d3.scaleSequential(COLORS.heatmap).domain([0, maxCount]);
+        }
+        
+        // Group families by category
+        const familyCategories = families.map(f => pfamCategories[f] || 'Unknown');
+        
+        // Draw category header bars with proper spacing
+        let xOffset = 0;
+        let prevCat = null;
+        let catStart = 0;
+        
+        for (let i = 0; i <= families.length; i++) {
+            const cat = i < families.length ? pfamCategories[families[i]] : null;
+            if (cat !== prevCat && prevCat !== null) {
+                const catWidth = (i - catStart) * cellWidth;
+                // Category background bar
+                g.append('rect')
+                    .attr('x', catStart * cellWidth)
+                    .attr('y', -margin.top + 20)
+                    .attr('width', catWidth)
+                    .attr('height', 24)
+                    .attr('fill', COLORS.categories[prevCat] || '#6b7280')
+                    .attr('rx', 4);
+                
+                // Category label - only if enough space
+                if (catWidth > 60) {
+                    g.append('text')
+                        .attr('x', catStart * cellWidth + catWidth / 2)
+                        .attr('y', -margin.top + 36)
+                        .attr('text-anchor', 'middle')
+                        .attr('fill', 'white')
+                        .attr('font-size', '9px')
+                        .attr('font-weight', '600')
+                        .text(prevCat.replace('Phase0_', 'P0_').replace('Phase', 'P').replace('Support', ''));
+                }
+                
+                catStart = i;
+            }
+            prevCat = cat;
+        }
+        
+        // Family labels (rotated)
+        families.forEach((fam, i) => {
+            g.append('text')
+                .attr('transform', `translate(${i * cellWidth + cellWidth/2}, -55) rotate(-65)`)
+                .attr('text-anchor', 'start')
+                .attr('fill', COLORS.categories[pfamCategories[fam]] || '#9ca3af')
+                .attr('font-size', '9px')
+                .text(fam);
+        });
+        
+        // Species labels with taxonomy badge
+        species.forEach((sp, i) => {
+            const tax = taxLookup[sp] || {};
+            const taxFam = tax.tax_family || 'Unknown';
+            
+            // Taxonomy badge
+            g.append('rect')
+                .attr('x', -margin.left + 8)
+                .attr('y', i * cellHeight + 1)
+                .attr('width', 10)
+                .attr('height', cellHeight - 2)
+                .attr('fill', COLORS.taxFamilies[taxFam] || '#6b7280')
+                .attr('rx', 2);
+            
+            // Species name
+            g.append('text')
+                .attr('x', -margin.left + 24)
+                .attr('y', i * cellHeight + cellHeight / 2 + 1)
+                .attr('dy', '0.3em')
+                .attr('fill', '#d1d5db')
+                .attr('font-size', '9px')
+                .attr('font-style', 'italic')
+                .text(sp.replace(/_/g, ' '));
+        });
+        
+        // Draw cells
+        species.forEach((sp, i) => {
+            families.forEach((fam, j) => {
+                const count = speciesFamilyCounts[sp][fam];
+                let colorVal = scaleType === 'log' ? (count > 0 ? Math.log10(count + 1) : 0) :
+                               scaleType === 'sqrt' ? Math.sqrt(count) : count;
+                
+                g.append('rect')
+                    .attr('class', 'cell')
+                    .attr('x', j * cellWidth + 1)
+                    .attr('y', i * cellHeight + 1)
+                    .attr('width', cellWidth - 2)
+                    .attr('height', cellHeight - 2)
+                    .attr('fill', count > 0 ? colorScale(colorVal) : '#1f2937')
+                    .attr('rx', 2)
+                    .on('mouseover', (event) => showTooltip(event, {
+                        title: sp.replace(/_/g, ' '),
+                        rows: [['Family', fam], ['Category', pfamCategories[fam]], ['Copies', count], ['Tax. family', taxLookup[sp]?.tax_family || 'Unknown']]
+                    }))
+                    .on('mouseout', hideTooltip);
+            });
+        });
+        
+        renderMainLegend();
+    }
+    
+    function renderMainLegend() {
+        const { taxLookup, species, maxCount, pfamCategories } = DATA.processed;
+        const taxFamilies = [...new Set(species.map(sp => taxLookup[sp]?.tax_family).filter(f => f))];
+        const categories = [...new Set(Object.values(pfamCategories))];
+        
+        document.getElementById('mainLegend').innerHTML = `
+            <div class="legend-group">
+                <div class="legend-title">Taxonomic Families</div>
+                <div class="legend-items">
+                    ${taxFamilies.map(tf => `<div class="legend-item"><div class="legend-color" style="background:${COLORS.taxFamilies[tf] || '#6b7280'}"></div>${tf}</div>`).join('')}
+                </div>
+            </div>
+            <div class="legend-group">
+                <div class="legend-title">Defensome Categories</div>
+                <div class="legend-items">
+                    ${CATEGORY_ORDER.filter(c => categories.includes(c)).map(cat => `<div class="legend-item"><div class="legend-color" style="background:${COLORS.categories[cat]}"></div>${cat}</div>`).join('')}
+                </div>
+            </div>
+            <div class="legend-group">
+                <div class="legend-title">Copy Number Scale</div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <span style="font-size:0.7rem;color:#9ca3af">0</span>
+                    <div style="width:120px;height:10px;border-radius:3px;background:linear-gradient(to right,#1f2937,${d3.interpolateYlOrRd(0.3)},${d3.interpolateYlOrRd(0.6)},${d3.interpolateYlOrRd(1)})"></div>
+                    <span style="font-size:0.7rem;color:#9ca3af">${maxCount}</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderPhyloHeatmap() {
+        const { species, families, taxLookup, pfamCategories, speciesFamilyCounts, maxCount } = DATA.processed;
+        const container = document.getElementById('phyloHeatmap');
+        container.innerHTML = '';
+        
+        const categoryFilter = document.getElementById('phyloCategorySelect')?.value || 'all';
+        const filteredFamilies = categoryFilter === 'all' ? families : 
+            families.filter(f => pfamCategories[f] === categoryFilter);
+        
+        if (filteredFamilies.length === 0) return;
+        
+        // Dimensions with tree
+        const treeWidth = 200;
+        const margin = { top: 120, right: 40, bottom: 20, left: 20 };
+        const cellWidth = 18;
+        const cellHeight = 14;
+        const width = margin.left + treeWidth + filteredFamilies.length * cellWidth + margin.right;
+        const height = margin.top + species.length * cellHeight + margin.bottom;
+        
+        const svg = d3.select(container).append('svg')
+            .attr('width', width).attr('height', height).attr('id', 'phyloHeatmapSVG');
+        
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        
+        // Build simple cladogram based on taxonomy
+        const taxGroups = d3.group(species, sp => taxLookup[sp]?.tax_order || 'Unknown');
+        
+        // Draw simple phylogeny (cladogram style)
+        let yPos = 0;
+        const speciesY = {};
+        
+        taxGroups.forEach((spp, order) => {
+            const famGroups = d3.group(spp, sp => taxLookup[sp]?.tax_family || 'Unknown');
+            const orderStartY = yPos;
+            
+            famGroups.forEach((famSpp, taxFam) => {
+                const famStartY = yPos;
+                famSpp.forEach(sp => {
+                    speciesY[sp] = yPos * cellHeight + cellHeight / 2;
+                    yPos++;
+                });
+                const famEndY = yPos - 1;
+                const famMidY = (famStartY + famEndY) / 2 * cellHeight + cellHeight / 2;
+                
+                // Family branch
+                g.append('path')
+                    .attr('d', `M${treeWidth - 60},${famMidY} H${treeWidth - 30}`)
+                    .attr('stroke', COLORS.taxFamilies[taxFam] || '#6b7280')
+                    .attr('stroke-width', 2)
+                    .attr('fill', 'none');
+                
+                // Vertical connector for family
+                if (famSpp.length > 1) {
+                    g.append('path')
+                        .attr('d', `M${treeWidth - 30},${famStartY * cellHeight + cellHeight/2} V${famEndY * cellHeight + cellHeight/2}`)
+                        .attr('stroke', COLORS.taxFamilies[taxFam] || '#6b7280')
+                        .attr('stroke-width', 1.5)
+                        .attr('fill', 'none');
+                }
+                
+                // Species branches
+                famSpp.forEach(sp => {
+                    g.append('path')
+                        .attr('d', `M${treeWidth - 30},${speciesY[sp]} H${treeWidth - 5}`)
+                        .attr('stroke', COLORS.taxFamilies[taxFam] || '#6b7280')
+                        .attr('stroke-width', 1)
+                        .attr('fill', 'none');
+                });
+            });
+            
+            const orderEndY = yPos - 1;
+            const orderMidY = (orderStartY + orderEndY) / 2 * cellHeight + cellHeight / 2;
+            
+            // Order branch
+            g.append('path')
+                .attr('d', `M${treeWidth - 120},${orderMidY} H${treeWidth - 60}`)
+                .attr('stroke', '#6b7280')
+                .attr('stroke-width', 2)
+                .attr('fill', 'none');
+            
+            // Vertical connector for order
+            const famMids = Array.from(d3.group(Array.from(famGroups.values()).flat(), sp => taxLookup[sp]?.tax_family).values())
+                .map(spp => {
+                    const ys = spp.map(sp => speciesY[sp]);
+                    return (Math.min(...ys) + Math.max(...ys)) / 2;
+                });
+            if (famMids.length > 1) {
+                g.append('path')
+                    .attr('d', `M${treeWidth - 60},${Math.min(...famMids)} V${Math.max(...famMids)}`)
+                    .attr('stroke', '#6b7280')
+                    .attr('stroke-width', 1.5)
+                    .attr('fill', 'none');
+            }
+            
+            // Order label
+            g.append('text')
+                .attr('x', treeWidth - 125)
+                .attr('y', orderMidY)
+                .attr('text-anchor', 'end')
+                .attr('dy', '0.35em')
+                .attr('fill', '#9ca3af')
+                .attr('font-size', '9px')
+                .attr('font-weight', '600')
+                .text(order);
+        });
+        
+        // Color scale
+        const colorScale = d3.scaleSequential(COLORS.heatmap).domain([0, Math.log10(maxCount + 1)]);
+        
+        // Family labels
+        filteredFamilies.forEach((fam, j) => {
+            g.append('text')
+                .attr('transform', `translate(${treeWidth + j * cellWidth + cellWidth/2}, -10) rotate(-65)`)
+                .attr('text-anchor', 'start')
+                .attr('fill', COLORS.categories[pfamCategories[fam]] || '#9ca3af')
+                .attr('font-size', '8px')
+                .text(fam);
+        });
+        
+        // Heatmap cells
+        species.forEach((sp, i) => {
+            filteredFamilies.forEach((fam, j) => {
+                const count = speciesFamilyCounts[sp][fam];
+                const colorVal = count > 0 ? Math.log10(count + 1) : 0;
+                
+                g.append('rect')
+                    .attr('class', 'cell')
+                    .attr('x', treeWidth + j * cellWidth + 1)
+                    .attr('y', i * cellHeight + 1)
+                    .attr('width', cellWidth - 2)
+                    .attr('height', cellHeight - 2)
+                    .attr('fill', count > 0 ? colorScale(colorVal) : '#1f2937')
+                    .attr('rx', 2)
+                    .on('mouseover', (event) => showTooltip(event, {
+                        title: sp.replace(/_/g, ' '),
+                        rows: [['Family', fam], ['Copies', count], ['Tax. family', taxLookup[sp]?.tax_family || 'Unknown']]
+                    }))
+                    .on('mouseout', hideTooltip);
+            });
+        });
+    }
+    
+    function renderPhyloBarChart() {
+        const { species, speciesStats, taxLookup } = DATA.processed;
+        const container = document.getElementById('phyloBarChart');
+        container.innerHTML = '';
+        
+        const margin = { top: 30, right: 150, bottom: 50, left: 180 };
+        const barHeight = 14;
+        const width = 900;
+        const height = margin.top + species.length * barHeight + margin.bottom;
+        
+        const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        
+        const maxTotal = d3.max(Object.values(speciesStats), d => d.total);
+        const xScale = d3.scaleLinear().domain([0, maxTotal]).range([0, width - margin.left - margin.right]);
+        
+        species.forEach((sp, i) => {
+            const stats = speciesStats[sp];
+            const taxFam = stats.taxFamily;
+            
+            // Stacked bar by category
+            let xOffset = 0;
+            CATEGORY_ORDER.forEach(cat => {
+                const val = stats.categoryBreakdown[cat] || 0;
+                if (val > 0) {
+                    g.append('rect')
+                        .attr('x', xOffset)
+                        .attr('y', i * barHeight + 1)
+                        .attr('width', xScale(val))
+                        .attr('height', barHeight - 2)
+                        .attr('fill', COLORS.categories[cat])
+                        .attr('rx', 2);
+                    xOffset += xScale(val);
+                }
+            });
+            
+            // Species label
+            g.append('text')
+                .attr('x', -5)
+                .attr('y', i * barHeight + barHeight / 2)
+                .attr('text-anchor', 'end')
+                .attr('dy', '0.35em')
+                .attr('fill', COLORS.taxFamilies[taxFam] || '#9ca3af')
+                .attr('font-size', '8px')
+                .attr('font-style', 'italic')
+                .text(sp.replace(/_/g, ' '));
+            
+            // Total label
+            g.append('text')
+                .attr('x', xOffset + 5)
+                .attr('y', i * barHeight + barHeight / 2)
+                .attr('dy', '0.35em')
+                .attr('fill', '#9ca3af')
+                .attr('font-size', '7px')
+                .text(stats.total);
+        });
+        
+        // X axis
+        g.append('g')
+            .attr('transform', `translate(0, ${species.length * barHeight + 5})`)
+            .call(d3.axisBottom(xScale).ticks(5))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '9px');
+        
+        g.append('text')
+            .attr('x', (width - margin.left - margin.right) / 2)
+            .attr('y', species.length * barHeight + 40)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#9ca3af')
+            .attr('font-size', '10px')
+            .text('Total Defensome Proteins');
+    }
+    
+    function renderTaxonomyCharts() {
+        renderTaxFamilyBarChart();
+        renderTaxCategoryStackedChart();
+        renderTaxConservation();
+        renderLepVsOutgroup();
+    }
+    
+    function renderTaxFamilyBarChart() {
+        const { species, speciesStats } = DATA.processed;
+        const container = document.getElementById('taxFamilyBarChart');
+        container.innerHTML = '';
+        
+        // Aggregate by taxonomic family
+        const taxAgg = d3.rollup(species,
+            v => ({ count: v.length, mean: d3.mean(v, sp => speciesStats[sp].total), std: d3.deviation(v, sp => speciesStats[sp].total) || 0 }),
+            sp => speciesStats[sp].taxFamily
+        );
+        
+        const taxData = Array.from(taxAgg, ([tf, stats]) => ({ taxFamily: tf, ...stats }))
+            .sort((a, b) => b.mean - a.mean);
+        
+        const margin = { top: 30, right: 30, bottom: 80, left: 60 };
+        const width = 450;
+        const height = 300;
+        
+        const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const plotW = width - margin.left - margin.right;
+        const plotH = height - margin.top - margin.bottom;
+        
+        const xScale = d3.scaleBand().domain(taxData.map(d => d.taxFamily)).range([0, plotW]).padding(0.3);
+        const yScale = d3.scaleLinear().domain([0, d3.max(taxData, d => d.mean + d.std) * 1.1]).range([plotH, 0]);
+        
+        taxData.forEach(d => {
+            g.append('rect')
+                .attr('x', xScale(d.taxFamily))
+                .attr('y', yScale(d.mean))
+                .attr('width', xScale.bandwidth())
+                .attr('height', plotH - yScale(d.mean))
+                .attr('fill', COLORS.taxFamilies[d.taxFamily] || '#6b7280')
+                .attr('rx', 4);
+            
+            // Error bar
+            if (d.std > 0 && d.count > 1) {
+                const midX = xScale(d.taxFamily) + xScale.bandwidth() / 2;
+                g.append('line')
+                    .attr('x1', midX).attr('x2', midX)
+                    .attr('y1', yScale(d.mean + d.std)).attr('y2', yScale(Math.max(0, d.mean - d.std)))
+                    .attr('stroke', '#9ca3af').attr('stroke-width', 1.5);
+            }
+            
+            // N label
+            g.append('text')
+                .attr('x', xScale(d.taxFamily) + xScale.bandwidth() / 2)
+                .attr('y', yScale(d.mean + d.std) - 5)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#9ca3af')
+                .attr('font-size', '8px')
+                .text(`n=${d.count}`);
+        });
+        
+        g.append('g').attr('transform', `translate(0, ${plotH})`)
+            .call(d3.axisBottom(xScale))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '8px')
+            .attr('transform', 'rotate(-40)').attr('text-anchor', 'end');
+        
+        g.append('g').call(d3.axisLeft(yScale).ticks(5))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '9px');
+        
+        g.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -plotH / 2).attr('y', -45)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#9ca3af')
+            .attr('font-size', '10px')
+            .text('Mean Defensome Size (±SD)');
+    }
+    
+    function renderTaxCategoryStackedChart() {
+        const { species, speciesStats } = DATA.processed;
+        const container = document.getElementById('taxCategoryStackedChart');
+        container.innerHTML = '';
+        
+        // Aggregate by taxonomic family
+        const taxAgg = d3.rollup(species,
+            v => {
+                const result = { count: v.length };
+                CATEGORY_ORDER.forEach(cat => {
+                    result[cat] = d3.mean(v, sp => speciesStats[sp].categoryBreakdown[cat] || 0);
+                });
+                return result;
+            },
+            sp => speciesStats[sp].taxFamily
+        );
+        
+        const taxData = Array.from(taxAgg, ([tf, stats]) => ({ taxFamily: tf, ...stats }))
+            .sort((a, b) => d3.sum(CATEGORY_ORDER.map(c => b[c] || 0)) - d3.sum(CATEGORY_ORDER.map(c => a[c] || 0)));
+        
+        const margin = { top: 30, right: 120, bottom: 80, left: 60 };
+        const width = 500;
+        const height = 300;
+        
+        const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const plotW = width - margin.left - margin.right;
+        const plotH = height - margin.top - margin.bottom;
+        
+        const xScale = d3.scaleBand().domain(taxData.map(d => d.taxFamily)).range([0, plotW]).padding(0.25);
+        const yScale = d3.scaleLinear()
+            .domain([0, d3.max(taxData, d => d3.sum(CATEGORY_ORDER.map(c => d[c] || 0)))])
+            .range([plotH, 0]);
+        
+        const stack = d3.stack().keys(CATEGORY_ORDER);
+        const stackedData = stack(taxData);
+        
+        stackedData.forEach(layer => {
+            g.selectAll(`.bar-${layer.key}`)
+                .data(layer)
+                .enter()
+                .append('rect')
+                .attr('x', d => xScale(d.data.taxFamily))
+                .attr('y', d => yScale(d[1]))
+                .attr('height', d => yScale(d[0]) - yScale(d[1]))
+                .attr('width', xScale.bandwidth())
+                .attr('fill', COLORS.categories[layer.key])
+                .attr('rx', 2);
+        });
+        
+        g.append('g').attr('transform', `translate(0, ${plotH})`)
+            .call(d3.axisBottom(xScale))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '8px')
+            .attr('transform', 'rotate(-40)').attr('text-anchor', 'end');
+        
+        g.append('g').call(d3.axisLeft(yScale).ticks(5))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '9px');
+        
+        // Legend
+        const legend = svg.append('g').attr('transform', `translate(${width - 110}, ${margin.top})`);
+        CATEGORY_ORDER.forEach((cat, i) => {
+            legend.append('rect').attr('x', 0).attr('y', i * 18).attr('width', 12).attr('height', 12)
+                .attr('fill', COLORS.categories[cat]).attr('rx', 2);
+            legend.append('text').attr('x', 16).attr('y', i * 18 + 9)
+                .attr('fill', '#9ca3af').attr('font-size', '8px').text(cat.replace('Phase', 'Ph'));
+        });
+    }
+    
+    function renderTaxConservation() {
+        const { species, families, taxLookup, pfamCategories, speciesFamilyCounts, speciesStats } = DATA.processed;
+        const container = document.getElementById('taxConservationHeatmap');
+        container.innerHTML = '';
+        
+        const familyFilter = document.getElementById('taxConservationFamilySelect')?.value || 'all';
+        const filteredFamilies = familyFilter === 'all' ? families :
+            families.filter(f => pfamCategories[f] === familyFilter);
+        
+        // Aggregate by taxonomic family
+        const taxFamilies = [...new Set(species.map(sp => speciesStats[sp].taxFamily))];
+        
+        const margin = { top: 100, right: 40, bottom: 20, left: 120 };
+        const cellWidth = 18;
+        const cellHeight = 24;
+        const width = margin.left + filteredFamilies.length * cellWidth + margin.right;
+        const height = margin.top + taxFamilies.length * cellHeight + margin.bottom;
+        
+        const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        
+        // Calculate mean per taxFamily per defFamily
+        const taxDefMeans = {};
+        taxFamilies.forEach(tf => {
+            taxDefMeans[tf] = {};
+            const tfSpecies = species.filter(sp => speciesStats[sp].taxFamily === tf);
+            filteredFamilies.forEach(fam => {
+                taxDefMeans[tf][fam] = d3.mean(tfSpecies, sp => speciesFamilyCounts[sp][fam]);
+            });
+        });
+        
+        const maxMean = d3.max(taxFamilies.flatMap(tf => filteredFamilies.map(f => taxDefMeans[tf][f])));
+        const colorScale = d3.scaleSequential(COLORS.heatmap).domain([0, Math.log10(maxMean + 1)]);
+        
+        // Family labels
+        filteredFamilies.forEach((fam, j) => {
+            g.append('text')
+                .attr('transform', `translate(${j * cellWidth + cellWidth/2}, -10) rotate(-65)`)
+                .attr('text-anchor', 'start')
+                .attr('fill', COLORS.categories[pfamCategories[fam]] || '#9ca3af')
+                .attr('font-size', '8px')
+                .text(fam);
+        });
+        
+        // Tax family labels and cells
+        taxFamilies.forEach((tf, i) => {
+            g.append('text')
+                .attr('x', -5)
+                .attr('y', i * cellHeight + cellHeight / 2)
+                .attr('text-anchor', 'end')
+                .attr('dy', '0.35em')
+                .attr('fill', COLORS.taxFamilies[tf] || '#9ca3af')
+                .attr('font-size', '10px')
+                .attr('font-weight', '500')
+                .text(tf);
+            
+            filteredFamilies.forEach((fam, j) => {
+                const mean = taxDefMeans[tf][fam];
+                g.append('rect')
+                    .attr('class', 'cell')
+                    .attr('x', j * cellWidth + 1)
+                    .attr('y', i * cellHeight + 1)
+                    .attr('width', cellWidth - 2)
+                    .attr('height', cellHeight - 2)
+                    .attr('fill', mean > 0 ? colorScale(Math.log10(mean + 1)) : '#1f2937')
+                    .attr('rx', 2)
+                    .on('mouseover', (event) => showTooltip(event, {
+                        title: `${tf} × ${fam}`,
+                        rows: [['Mean copies', mean.toFixed(2)], ['Category', pfamCategories[fam]]]
+                    }))
+                    .on('mouseout', hideTooltip);
+            });
+        });
+    }
+    
+    function renderLepVsOutgroup() {
+        const { species, families, speciesStats, speciesFamilyCounts, pfamCategories } = DATA.processed;
+        const container = document.getElementById('lepVsOutgroupChart');
+        container.innerHTML = '';
+        
+        const lepSpecies = species.filter(sp => speciesStats[sp].taxOrder === 'Lepidoptera');
+        const outSpecies = species.filter(sp => speciesStats[sp].taxOrder !== 'Lepidoptera');
+        
+        if (outSpecies.length === 0) {
+            container.innerHTML = '<p style="color:#9ca3af;padding:1rem;">No outgroup species detected.</p>';
+            return;
+        }
+        
+        // Calculate means
+        const comparison = families.map(fam => ({
+            family: fam,
+            category: pfamCategories[fam],
+            lepMean: d3.mean(lepSpecies, sp => speciesFamilyCounts[sp][fam]),
+            outMean: d3.mean(outSpecies, sp => speciesFamilyCounts[sp][fam]),
+            lepMedian: d3.median(lepSpecies, sp => speciesFamilyCounts[sp][fam]),
+            outMedian: d3.median(outSpecies, sp => speciesFamilyCounts[sp][fam])
+        }));
+        
+        // Sort by log2 fold change
+        comparison.forEach(d => {
+            d.log2FC = Math.log2((d.lepMean + 0.1) / (d.outMean + 0.1));
+        });
+        comparison.sort((a, b) => b.log2FC - a.log2FC);
+        
+        const margin = { top: 30, right: 40, bottom: 100, left: 60 };
+        const width = 900;
+        const height = 350;
+        
+        const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const plotW = width - margin.left - margin.right;
+        const plotH = height - margin.top - margin.bottom;
+        
+        const xScale = d3.scaleBand().domain(comparison.map(d => d.family)).range([0, plotW]).padding(0.2);
+        const maxAbsFC = d3.max(comparison, d => Math.abs(d.log2FC));
+        const yScale = d3.scaleLinear().domain([-maxAbsFC, maxAbsFC]).range([plotH, 0]);
+        
+        // Zero line
+        g.append('line')
+            .attr('x1', 0).attr('x2', plotW)
+            .attr('y1', yScale(0)).attr('y2', yScale(0))
+            .attr('stroke', '#6b7280').attr('stroke-dasharray', '4,4');
+        
+        // Bars
+        comparison.forEach(d => {
+            g.append('rect')
+                .attr('x', xScale(d.family))
+                .attr('y', d.log2FC >= 0 ? yScale(d.log2FC) : yScale(0))
+                .attr('width', xScale.bandwidth())
+                .attr('height', Math.abs(yScale(d.log2FC) - yScale(0)))
+                .attr('fill', d.log2FC >= 0 ? '#10b981' : '#f43f5e')
+                .attr('rx', 2)
+                .on('mouseover', (event) => showTooltip(event, {
+                    title: d.family,
+                    rows: [
+                        ['Log2 FC', d.log2FC.toFixed(2)],
+                        ['Lep. mean', d.lepMean.toFixed(1)],
+                        ['Outgroup mean', d.outMean.toFixed(1)]
+                    ]
+                }))
+                .on('mouseout', hideTooltip);
+        });
+        
+        g.append('g').attr('transform', `translate(0, ${plotH})`)
+            .call(d3.axisBottom(xScale))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '8px')
+            .attr('transform', 'rotate(-45)').attr('text-anchor', 'end');
+        
+        g.append('g').call(d3.axisLeft(yScale).ticks(5))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '9px');
+        
+        g.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -plotH / 2).attr('y', -45)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#9ca3af')
+            .attr('font-size', '10px')
+            .text('Log2 Fold Change (Lep. / Outgroup)');
+        
+        // Annotation
+        g.append('text').attr('x', plotW - 5).attr('y', 10).attr('text-anchor', 'end')
+            .attr('fill', '#10b981').attr('font-size', '9px').text('↑ Higher in Lepidoptera');
+        g.append('text').attr('x', plotW - 5).attr('y', plotH - 5).attr('text-anchor', 'end')
+            .attr('fill', '#f43f5e').attr('font-size', '9px').text('↓ Higher in Outgroups');
+    }
+    
+    function renderConservationCharts() {
+        renderConservationScatter();
+        renderConservationStackedBar();
+        renderCoreAccessoryChart();
+    }
+    
+    function renderConservationScatter() {
+        const { ogData, pfamCategories } = DATA.processed;
+        const container = document.getElementById('conservationScatter');
+        container.innerHTML = '';
+        
+        if (ogData.length === 0) {
+            container.innerHTML = '<p style="color:#9ca3af;padding:1rem;">No orthogroup data available.</p>';
+            return;
+        }
+        
+        const margin = { top: 30, right: 100, bottom: 50, left: 60 };
+        const width = 500;
+        const height = 350;
+        
+        const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const plotW = width - margin.left - margin.right;
+        const plotH = height - margin.top - margin.bottom;
+        
+        const xScale = d3.scaleLinear().domain([0, 1]).range([0, plotW]);
+        const yScale = d3.scaleLog().domain([0.5, d3.max(ogData, d => d.maxCopy) + 1]).range([plotH, 0]);
+        
+        // Points
+        ogData.filter(d => d.maxCopy > 0).forEach(d => {
+            g.append('circle')
+                .attr('cx', xScale(d.presenceFrac))
+                .attr('cy', yScale(Math.max(0.5, d.maxCopy)))
+                .attr('r', 4)
+                .attr('fill', COLORS.conservation[d.label] || '#6b7280')
+                .attr('opacity', 0.7)
+                .attr('stroke', '#1f2937')
+                .attr('stroke-width', 0.5)
+                .on('mouseover', (event) => showTooltip(event, {
+                    title: d.orthogroup,
+                    rows: [['Family', d.family], ['Label', d.label], ['Presence', `${(d.presenceFrac*100).toFixed(1)}%`], ['Max copies', d.maxCopy]]
+                }))
+                .on('mouseout', hideTooltip);
+        });
+        
+        g.append('g').attr('transform', `translate(0, ${plotH})`)
+            .call(d3.axisBottom(xScale).tickFormat(d3.format('.0%')))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '9px');
+        
+        g.append('g').call(d3.axisLeft(yScale).ticks(5))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '9px');
+        
+        g.append('text').attr('x', plotW / 2).attr('y', plotH + 40).attr('text-anchor', 'middle')
+            .attr('fill', '#9ca3af').attr('font-size', '10px').text('Species Presence');
+        
+        g.append('text').attr('transform', 'rotate(-90)').attr('x', -plotH / 2).attr('y', -45)
+            .attr('text-anchor', 'middle').attr('fill', '#9ca3af').attr('font-size', '10px').text('Max Copy Number');
+        
+        // Legend
+        const legend = svg.append('g').attr('transform', `translate(${width - 90}, ${margin.top})`);
+        ['conserved', 'expanded', 'other'].forEach((label, i) => {
+            legend.append('circle').attr('cx', 6).attr('cy', i * 20).attr('r', 5).attr('fill', COLORS.conservation[label]);
+            legend.append('text').attr('x', 16).attr('y', i * 20 + 4).attr('fill', '#9ca3af').attr('font-size', '9px')
+                .text(label.charAt(0).toUpperCase() + label.slice(1));
+        });
+    }
+    
+    function renderConservationStackedBar() {
+        const { ogData, families, pfamCategories } = DATA.processed;
+        const container = document.getElementById('conservationStackedBar');
+        container.innerHTML = '';
+        
+        if (ogData.length === 0) return;
+        
+        const familyCons = d3.rollup(ogData,
+            v => ({ conserved: v.filter(d => d.label === 'conserved').length,
+                    expanded: v.filter(d => d.label === 'expanded').length,
+                    other: v.filter(d => d.label === 'other').length }),
+            d => d.family
+        );
+        
+        const data = Array.from(familyCons, ([family, counts]) => ({
+            family, ...counts, total: counts.conserved + counts.expanded + counts.other,
+            category: pfamCategories[family]
+        })).sort((a, b) => {
+            const catA = CATEGORY_ORDER.indexOf(a.category);
+            const catB = CATEGORY_ORDER.indexOf(b.category);
+            if (catA !== catB) return catA - catB;
+            return b.total - a.total;
+        });
+        
+        const margin = { top: 30, right: 40, bottom: 100, left: 50 };
+        const width = 500;
+        const height = 350;
+        
+        const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        const plotW = width - margin.left - margin.right;
+        const plotH = height - margin.top - margin.bottom;
+        
+        const xScale = d3.scaleBand().domain(data.map(d => d.family)).range([0, plotW]).padding(0.2);
+        const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.total)]).range([plotH, 0]);
+        
+        const stack = d3.stack().keys(['conserved', 'expanded', 'other']);
+        const stackedData = stack(data);
+        
+        stackedData.forEach(layer => {
+            g.selectAll(`.bar-${layer.key}`)
+                .data(layer)
+                .enter()
+                .append('rect')
+                .attr('x', d => xScale(d.data.family))
+                .attr('y', d => yScale(d[1]))
+                .attr('height', d => yScale(d[0]) - yScale(d[1]))
+                .attr('width', xScale.bandwidth())
+                .attr('fill', COLORS.conservation[layer.key])
+                .attr('rx', 2);
+        });
+        
+        g.append('g').attr('transform', `translate(0, ${plotH})`)
+            .call(d3.axisBottom(xScale))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '7px')
+            .attr('transform', 'rotate(-50)').attr('text-anchor', 'end');
+        
+        g.append('g').call(d3.axisLeft(yScale).ticks(5))
+            .selectAll('text').attr('fill', '#9ca3af').attr('font-size', '9px');
+    }
+    
+    function renderCoreAccessoryChart() {
+        const { ogData, species, speciesStats } = DATA.processed;
+        const container = document.getElementById('coreAccessoryChart');
+        container.innerHTML = '';
+        
+        if (ogData.length === 0) return;
+        
+        // Define core (>80% presence), shell (20-80%), cloud (<20%)
+        const core = ogData.filter(d => d.presenceFrac >= 0.8);
+        const shell = ogData.filter(d => d.presenceFrac >= 0.2 && d.presenceFrac < 0.8);
+        const cloud = ogData.filter(d => d.presenceFrac < 0.2);
+        
+        const lepSpecies = species.filter(sp => speciesStats[sp].taxOrder === 'Lepidoptera');
+        const lepFrac = lepSpecies.length / species.length;
+        
+        // Recalculate for Lepidoptera only
+        // This is simplified; ideally you'd compute Lep-specific presence
+        
+        const pieData = [
+            { label: 'Core (≥80%)', count: core.length, color: '#10b981' },
+            { label: 'Shell (20-80%)', count: shell.length, color: '#f59e0b' },
+            { label: 'Cloud (<20%)', count: cloud.length, color: '#6b7280' }
+        ];
+        
+        const width = 400;
+        const height = 300;
+        const radius = Math.min(width, height) / 2 - 40;
+        
+        const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+        svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#111827');
+        
+        const g = svg.append('g').attr('transform', `translate(${width/2}, ${height/2})`);
+        
+        const pie = d3.pie().value(d => d.count).sort(null);
+        const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius);
+        
+        const arcs = g.selectAll('.arc')
+            .data(pie(pieData))
+            .enter()
+            .append('g');
+        
+        arcs.append('path')
+            .attr('d', arc)
+            .attr('fill', d => d.data.color)
+            .attr('stroke', '#111827')
+            .attr('stroke-width', 2);
+        
+        arcs.append('text')
+            .attr('transform', d => `translate(${arc.centroid(d)})`)
+            .attr('text-anchor', 'middle')
+            .attr('fill', 'white')
+            .attr('font-size', '11px')
+            .attr('font-weight', '600')
+            .text(d => d.data.count);
+        
+        // Legend
+        const legend = svg.append('g').attr('transform', `translate(${width - 130}, 20)`);
+        pieData.forEach((d, i) => {
+            legend.append('rect').attr('x', 0).attr('y', i * 22).attr('width', 14).attr('height', 14)
+                .attr('fill', d.color).attr('rx', 3);
+            legend.append('text').attr('x', 20).attr('y', i * 22 + 11)
+                .attr('fill', '#d1d5db').attr('font-size', '10px').text(d.label);
+        });
+        
+        // Center text
+        g.append('text').attr('text-anchor', 'middle').attr('dy', '-0.2em')
+            .attr('fill', '#d1d5db').attr('font-size', '12px').attr('font-weight', '600')
+            .text(`${ogData.length}`);
+        g.append('text').attr('text-anchor', 'middle').attr('dy', '1em')
+            .attr('fill', '#9ca3af').attr('font-size', '10px').text('orthogroups');
+    }
+    
+    function renderFamilyStats() {
+        const { families, familyStats } = DATA.processed;
+        const maxTotal = d3.max(Object.values(familyStats), d => d.total);
+        
+        document.getElementById('familyStatsTable').innerHTML = `
+            <thead><tr>
+                <th>Family</th><th>Category</th><th>Total</th><th>Mean</th><th>Median</th><th>Range</th><th>Species Present</th><th>Distribution</th>
+            </tr></thead>
+            <tbody>
+                ${families.map(fam => {
+                    const s = familyStats[fam];
+                    return `<tr>
+                        <td style="font-weight:600;color:${COLORS.categories[s.category] || '#9ca3af'}">${fam}</td>
+                        <td>${s.category}</td>
+                        <td style="font-family:'IBM Plex Mono',monospace">${s.total.toLocaleString()}</td>
+                        <td style="font-family:'IBM Plex Mono',monospace">${s.mean.toFixed(1)}</td>
+                        <td style="font-family:'IBM Plex Mono',monospace">${s.median.toFixed(0)}</td>
+                        <td style="font-family:'IBM Plex Mono',monospace">${s.min}-${s.max}</td>
+                        <td style="font-family:'IBM Plex Mono',monospace">${s.speciesPresent} (${(s.presenceFrac*100).toFixed(0)}%)</td>
+                        <td style="width:120px"><div class="bar-mini"><div class="bar-mini-fill" style="width:${(s.total/maxTotal*100).toFixed(1)}%;background:${COLORS.categories[s.category] || '#6b7280'}"></div></div></td>
+                    </tr>`;
+                }).join('')}
+            </tbody>`;
+    }
+    
+    function renderOGDetails() { updateOGTable(); }
+    
+    function updateOGTable() {
+        const familyFilter = document.getElementById('ogFamilyFilter')?.value || 'all';
+        const labelFilter = document.getElementById('ogLabelFilter')?.value || 'all';
+        
+        let data = DATA.processed.ogData;
+        if (familyFilter !== 'all') data = data.filter(d => d.family === familyFilter);
+        if (labelFilter !== 'all') data = data.filter(d => d.label === labelFilter);
+        data = data.sort((a, b) => b.presenceFrac - a.presenceFrac);
+        
+        document.getElementById('ogDetailsTable').innerHTML = `
+            <thead><tr>
+                <th>Orthogroup</th><th>Family</th><th>Category</th><th>Label</th><th>Species</th><th>Presence</th><th>Median</th><th>Max</th><th>Mean</th>
+            </tr></thead>
+            <tbody>
+                ${data.slice(0, 400).map(og => `<tr>
+                    <td style="font-family:'IBM Plex Mono',monospace;font-size:0.75rem">${og.orthogroup}</td>
+                    <td style="color:${COLORS.categories[og.category] || '#9ca3af'}">${og.family}</td>
+                    <td>${og.category}</td>
+                    <td><span class="conservation-badge ${og.label}">${og.label}</span></td>
+                    <td style="font-family:'IBM Plex Mono',monospace">${og.presenceSpecies}</td>
+                    <td style="font-family:'IBM Plex Mono',monospace">${(og.presenceFrac*100).toFixed(1)}%</td>
+                    <td style="font-family:'IBM Plex Mono',monospace">${og.medianCopy.toFixed(1)}</td>
+                    <td style="font-family:'IBM Plex Mono',monospace">${og.maxCopy}</td>
+                    <td style="font-family:'IBM Plex Mono',monospace">${og.meanCopy.toFixed(2)}</td>
+                </tr>`).join('')}
+            </tbody>`;
+    }
+    
+    function populateFilters() {
+        const { families, pfamCategories } = DATA.processed;
+        const categories = [...new Set(Object.values(pfamCategories))];
+        
+        // Phylo category filter
+        const phyloSelect = document.getElementById('phyloCategorySelect');
+        CATEGORY_ORDER.filter(c => categories.includes(c)).forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat; opt.textContent = cat;
+            phyloSelect.appendChild(opt);
+        });
+        
+        // Tax conservation filter
+        const taxSelect = document.getElementById('taxConservationFamilySelect');
+        CATEGORY_ORDER.filter(c => categories.includes(c)).forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat; opt.textContent = cat;
+            taxSelect.appendChild(opt);
+        });
+        
+        // OG family filter
+        const ogSelect = document.getElementById('ogFamilyFilter');
+        families.forEach(fam => {
+            const opt = document.createElement('option');
+            opt.value = fam; opt.textContent = fam;
+            ogSelect.appendChild(opt);
+        });
+    }
+    
+    function setupEventListeners() {
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+            });
+        });
+    }
+    
+    function showTooltip(event, data) {
+        const tooltip = document.getElementById('tooltip');
+        tooltip.innerHTML = `
+            <div class="tooltip-title">${data.title}</div>
+            ${data.rows.map(([l, v]) => `<div class="tooltip-row"><span class="tooltip-label">${l}</span><span class="tooltip-value">${v}</span></div>`).join('')}
+        `;
+        tooltip.style.left = (event.clientX + 15) + 'px';
+        tooltip.style.top = (event.clientY - 10) + 'px';
+        tooltip.classList.add('visible');
+    }
+    
+    function hideTooltip() { document.getElementById('tooltip').classList.remove('visible'); }
+    
+    function downloadSVG(svgId, filename) {
+        const svg = document.getElementById(svgId);
+        if (!svg) return;
+        const blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `${filename}_${new Date().toISOString().split('T')[0]}.svg`;
+        a.click();
+    }
+    
+    function downloadCSV(dataType) {
+        let csv = '', filename = '';
+        const { families, familyStats, ogData } = DATA.processed;
+        
+        if (dataType === 'familyStats') {
+            csv = 'family,category,total,mean,median,min,max,species_present,presence_frac\n';
+            families.forEach(f => {
+                const s = familyStats[f];
+                csv += `${f},${s.category},${s.total},${s.mean.toFixed(2)},${s.median},${s.min},${s.max},${s.speciesPresent},${s.presenceFrac.toFixed(3)}\n`;
+            });
+            filename = 'defensome_family_stats.csv';
+        } else if (dataType === 'ogDetails') {
+            csv = 'orthogroup,family,category,label,presence_species,presence_frac,median_copy,max_copy,mean_copy\n';
+            ogData.forEach(og => {
+                csv += `${og.orthogroup},${og.family},${og.category},${og.label},${og.presenceSpecies},${og.presenceFrac.toFixed(3)},${og.medianCopy},${og.maxCopy},${og.meanCopy.toFixed(3)}\n`;
+            });
+            filename = 'defensome_orthogroup_details.csv';
+        }
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+    }
+    </script>
+</body>
+</html>

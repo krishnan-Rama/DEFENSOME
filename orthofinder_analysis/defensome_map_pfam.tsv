@@ -1,0 +1,24 @@
+#category	family	pfam_id	notes	key_refs
+Phase0_Regulation	Nuclear_receptor_LBD	PF00104	NR ligand-binding domain; pair with zf-C4	Pub: HR96-related NR affects detox/host use (2023)	turn0search15
+Phase0_Regulation	Nuclear_receptor_DBD	PF00105	NR DNA-binding zinc-finger; pair with LBD	Pub: HR96-related NR affects detox/host use (2023)	turn0search15
+Phase0_Regulation	bHLH	PF00010	bHLH domain; require PAS too for bHLH-PAS TFs	Review bHLH-PAS roles incl detox (2024)	turn1search16
+Phase0_Regulation	PAS	PF00989	PAS domain; require bHLH too	Review bHLH-PAS roles incl detox (2024)	turn1search16
+Phase0_Regulation	PAS_2	PF13426	Second PAS domain often present	Review bHLH-PAS roles incl detox (2024)	turn1search16
+Phase0_Regulation	Keap1_BTB	PF00651	Keap1 architecture BTB+BACK+Kelch; confirm orthology	CncC/Keap1 in Lepidoptera (2023–2025)	turn1search1;turn1search2
+Phase0_Regulation	Keap1_BACK	PF07707	As above	CncC/Keap1 in Lepidoptera (2023–2025)	turn1search1;turn1search2
+Phase0_Regulation	Keap1_Kelch	PF01344	As above	CncC/Keap1 in Lepidoptera (2023–2025)	turn1search1;turn1search2
+PhaseI	CYP	PF00067	Length filter recommended; clan via phylogeny	Plant-toxin detox review (2024)	turn0search2
+PhaseI	CCE	PF00135	Broad; requires phylogeny/curation	Major detox families comparative (2024)	turn0search20
+PhaseI	FMO	PF00743	Validate vs other flavoproteins if needed	Plant-toxin detox review (2024)	turn0search2
+PhaseI	EH	PF00561	Broad; requires motif/phylogeny	Plant-toxin detox review (2024)	turn0search2
+PhaseII	GST_N	PF02798	Require GST_C too for GST_strict	Resistance omics review (2024)	turn0search1
+PhaseII	GST_C	PF00043	Require GST_N too for GST_strict	Resistance omics review (2024)	turn0search1
+PhaseII	UGT	PF00201	Apply sanity checks (length/motifs)	Resistance omics review (2024)	turn0search1
+PhaseII	SULT	PF00685	Typically clean	Plant-toxin detox review (2024)	turn0search2
+PhaseIII	ABC_NBD	PF00005	Require ABC_TMD too for ABC_transporter_strict	ABC phase III detox (2025)	turn0search4
+PhaseIII	ABC_TMD	PF00664	Require ABC_NBD too for ABC_transporter_strict	ABC phase III detox (2025)	turn0search4
+OxStress	SOD_CuZn	PF00080	Separate CuZn vs MnFe if desired	CncC/Keap1 detox+antioxidant regulation (2023–2025)	turn1search2;turn1search18
+OxStress	Catalase	PF00199	Straightforward	CncC/Keap1 detox+antioxidant regulation (2023–2025)	turn1search2;turn1search18
+OxStress	Peroxiredoxin	PF00578	Straightforward	CncC/Keap1 detox+antioxidant regulation (2023–2025)	turn1search2;turn1search18
+RedoxSupport	Thioredoxin	PF00085	Filter Trx vs other Trx-fold proteins	CncC/Keap1 detox+antioxidant regulation (2023–2025)	turn1search2;turn1search18
+PhaseIII	ABC_TMD	PF00664	ABC transporter transmembrane	turn0search4

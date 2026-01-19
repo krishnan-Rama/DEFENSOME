@@ -1,0 +1,577 @@
+family	orthogroup	label	rule
+ABC_NBD	OG0000116	other	
+ABC_NBD	OG0000206	other	
+ABC_NBD	OG0000399	other	
+ABC_NBD	OG0000642	other	
+ABC_NBD	OG0000935	other	
+ABC_NBD	OG0001161	other	
+ABC_NBD	OG0001322	other	
+ABC_NBD	OG0001611	other	
+ABC_NBD	OG0002339	other	
+ABC_NBD	OG0002396	other	
+ABC_NBD	OG0002801	other	
+ABC_NBD	OG0003756	other	
+ABC_NBD	OG0003757	other	
+ABC_NBD	OG0003807	other	
+ABC_NBD	OG0003822	other	
+ABC_NBD	OG0003858	other	
+ABC_NBD	OG0003859	other	
+ABC_NBD	OG0004514	other	
+ABC_NBD	OG0004619	other	
+ABC_NBD	OG0004665	other	
+ABC_NBD	OG0004708	other	
+ABC_NBD	OG0004725	other	
+ABC_NBD	OG0004909	other	
+ABC_NBD	OG0005214	other	
+ABC_NBD	OG0005234	other	
+ABC_NBD	OG0005243	other	
+ABC_NBD	OG0005824	other	
+ABC_NBD	OG0005978	other	
+ABC_NBD	OG0006593	other	
+ABC_NBD	OG0006604	other	
+ABC_NBD	OG0007118	other	
+ABC_NBD	OG0007446	other	
+ABC_NBD	OG0007487	other	
+ABC_NBD	OG0009525	other	
+ABC_NBD	OG0009930	other	
+ABC_NBD	OG0011553	other	
+ABC_NBD	OG0011585	other	
+ABC_NBD	OG0013160	other	
+ABC_NBD	OG0013225	other	
+ABC_NBD	OG0013476	other	
+ABC_NBD	OG0013577	other	
+ABC_NBD	OG0013616	other	
+ABC_NBD	OG0013911	other	
+ABC_NBD	OG0014075	other	
+ABC_NBD	OG0014112	other	
+ABC_NBD	OG0014581	other	
+ABC_NBD	OG0015106	other	
+ABC_NBD	OG0016765	other	
+ABC_NBD	OG0017556	other	
+ABC_NBD	OG0020508	other	
+ABC_NBD	OG0022015	other	
+ABC_TMD	OG0000116	other	
+ABC_TMD	OG0000399	other	
+ABC_TMD	OG0000642	other	
+ABC_TMD	OG0001161	expanded	max_copy>=5
+ABC_TMD	OG0001322	other	
+ABC_TMD	OG0002339	other	
+ABC_TMD	OG0002918	other	
+ABC_TMD	OG0003591	other	
+ABC_TMD	OG0003756	other	
+ABC_TMD	OG0003757	other	
+ABC_TMD	OG0003822	other	
+ABC_TMD	OG0004358	other	
+ABC_TMD	OG0004725	other	
+ABC_TMD	OG0005243	other	
+ABC_TMD	OG0005932	other	
+ABC_TMD	OG0005978	other	
+ABC_TMD	OG0006820	other	
+ABC_TMD	OG0009525	other	
+ABC_TMD	OG0011914	other	
+ABC_TMD	OG0012540	other	
+ABC_TMD	OG0013220	other	
+ABC_TMD	OG0013886	other	
+ABC_TMD	OG0014071	other	
+ABC_TMD	OG0018782	other	
+ABC_TMD	OG0018818	other	
+ABC_TMD	OG0020435	other	
+ABC_TMD	OG0021324	other	
+ABC_strict	OG0000642	other	
+CCE	OG0000020	expanded	max_copy>=5
+CCE	OG0000051	expanded	max_copy>=5
+CCE	OG0000129	expanded	max_copy>=5
+CCE	OG0000181	expanded	max_copy>=5
+CCE	OG0000244	expanded	max_copy>=5
+CCE	OG0000308	expanded	max_copy>=5
+CCE	OG0000760	expanded	max_copy>=5
+CCE	OG0001076	other	
+CCE	OG0001136	other	
+CCE	OG0001608	expanded	max_copy>=5
+CCE	OG0002076	other	
+CCE	OG0002257	other	
+CCE	OG0002322	other	
+CCE	OG0002437	other	
+CCE	OG0002524	expanded	max_copy>=5
+CCE	OG0002708	other	
+CCE	OG0003355	expanded	max_copy>=5
+CCE	OG0003452	expanded	max_copy>=5
+CCE	OG0003568	expanded	max_copy>=5
+CCE	OG0004627	other	
+CCE	OG0004633	other	
+CCE	OG0004654	other	
+CCE	OG0004660	other	
+CCE	OG0004715	other	
+CCE	OG0004782	expanded	max_copy>=5
+CCE	OG0004954	other	
+CCE	OG0005242	other	
+CCE	OG0005388	expanded	max_copy>=5
+CCE	OG0005406	other	
+CCE	OG0005926	other	
+CCE	OG0006080	other	
+CCE	OG0006528	other	
+CCE	OG0006796	conserved	presence_frac>=0.8 & median~1 & max<=2
+CCE	OG0007105	expanded	max_copy>=5
+CCE	OG0007205	other	
+CCE	OG0007335	other	
+CCE	OG0007344	other	
+CCE	OG0007552	other	
+CCE	OG0008698	conserved	presence_frac>=0.8 & median~1 & max<=2
+CCE	OG0009442	conserved	presence_frac>=0.8 & median~1 & max<=2
+CCE	OG0009583	expanded	max_copy>=5
+CCE	OG0009697	other	
+CCE	OG0009733	other	
+CCE	OG0009830	conserved	presence_frac>=0.8 & median~1 & max<=2
+CCE	OG0009996	conserved	presence_frac>=0.8 & median~1 & max<=2
+CCE	OG0010058	other	
+CCE	OG0010173	expanded	max_copy>=5
+CCE	OG0010322	other	
+CCE	OG0010614	other	
+CCE	OG0010651	other	
+CCE	OG0010900	expanded	max_copy>=5
+CCE	OG0010926	other	
+CCE	OG0011220	expanded	max_copy>=5
+CCE	OG0011376	expanded	max_copy>=5
+CCE	OG0011548	other	
+CCE	OG0012149	other	
+CCE	OG0012291	other	
+CCE	OG0012296	other	
+CCE	OG0012531	other	
+CCE	OG0012538	expanded	max_copy>=5
+CCE	OG0012760	other	
+CCE	OG0012888	other	
+CCE	OG0012906	expanded	max_copy>=5
+CCE	OG0012977	other	
+CCE	OG0013162	other	
+CCE	OG0013364	other	
+CCE	OG0013464	other	
+CCE	OG0013475	other	
+CCE	OG0013780	other	
+CCE	OG0014174	other	
+CCE	OG0014302	other	
+CCE	OG0014383	expanded	max_copy>=5
+CCE	OG0014669	other	
+CCE	OG0014707	other	
+CCE	OG0014768	other	
+CCE	OG0014801	other	
+CCE	OG0015143	other	
+CCE	OG0015220	expanded	max_copy>=5
+CCE	OG0015567	other	
+CCE	OG0016136	other	
+CCE	OG0016138	other	
+CCE	OG0016439	other	
+CCE	OG0016466	other	
+CCE	OG0016492	other	
+CCE	OG0016583	other	
+CCE	OG0016901	other	
+CCE	OG0017198	other	
+CCE	OG0017363	other	
+CCE	OG0017395	other	
+CCE	OG0017917	other	
+CCE	OG0017966	other	
+CCE	OG0018069	other	
+CCE	OG0018082	other	
+CCE	OG0018289	other	
+CCE	OG0018328	other	
+CCE	OG0018683	other	
+CCE	OG0018791	other	
+CCE	OG0018920	other	
+CCE	OG0019312	other	
+CCE	OG0019420	other	
+CCE	OG0020155	other	
+CCE	OG0020258	other	
+CCE	OG0020621	other	
+CCE	OG0020898	other	
+CCE	OG0021764	other	
+CCE	OG0021836	other	
+CCE	OG0024374	other	
+CCE	OG0024410	other	
+CCE	OG0024599	other	
+CCE	OG0024615	other	
+CCE	OG0025921	other	
+CCE	OG0026270	other	
+CCE	OG0026572	other	
+CYP	OG0000013	expanded	max_copy>=5
+CYP	OG0000040	expanded	max_copy>=5
+CYP	OG0000044	expanded	max_copy>=5
+CYP	OG0000045	expanded	max_copy>=5
+CYP	OG0000053	other	
+CYP	OG0000057	expanded	max_copy>=5
+CYP	OG0000058	expanded	max_copy>=5
+CYP	OG0000103	expanded	max_copy>=5
+CYP	OG0000145	expanded	max_copy>=5
+CYP	OG0000248	expanded	max_copy>=5
+CYP	OG0000507	expanded	max_copy>=5
+CYP	OG0000624	other	
+CYP	OG0000676	expanded	max_copy>=5
+CYP	OG0000861	expanded	max_copy>=5
+CYP	OG0001139	expanded	max_copy>=5
+CYP	OG0002065	expanded	max_copy>=5
+CYP	OG0002244	expanded	max_copy>=5
+CYP	OG0002349	expanded	max_copy>=5
+CYP	OG0002354	expanded	max_copy>=5
+CYP	OG0002363	expanded	max_copy>=5
+CYP	OG0002395	expanded	max_copy>=5
+CYP	OG0002891	expanded	max_copy>=5
+CYP	OG0002920	expanded	max_copy>=5
+CYP	OG0002971	other	
+CYP	OG0003042	other	
+CYP	OG0003158	other	
+CYP	OG0003226	other	
+CYP	OG0003403	other	
+CYP	OG0003610	other	
+CYP	OG0003690	other	
+CYP	OG0003887	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0004826	other	
+CYP	OG0005390	other	
+CYP	OG0005497	other	
+CYP	OG0006770	other	
+CYP	OG0006834	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0006950	other	
+CYP	OG0007273	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0007322	other	
+CYP	OG0007408	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0007818	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0008247	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0008310	expanded	max_copy>=5
+CYP	OG0008790	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0008961	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0009014	conserved	presence_frac>=0.8 & median~1 & max<=2
+CYP	OG0009188	other	
+CYP	OG0009504	other	
+CYP	OG0010251	other	
+CYP	OG0010689	other	
+CYP	OG0010911	other	
+CYP	OG0010973	other	
+CYP	OG0011592	expanded	max_copy>=5
+CYP	OG0011943	other	
+CYP	OG0012498	other	
+CYP	OG0012629	other	
+CYP	OG0012769	other	
+CYP	OG0013302	other	
+CYP	OG0014296	other	
+CYP	OG0014609	other	
+CYP	OG0014715	other	
+CYP	OG0014725	other	
+CYP	OG0014779	other	
+CYP	OG0015049	other	
+CYP	OG0015482	other	
+CYP	OG0015851	other	
+CYP	OG0015998	other	
+CYP	OG0016162	other	
+CYP	OG0016338	other	
+CYP	OG0016398	other	
+CYP	OG0016835	other	
+CYP	OG0017060	other	
+CYP	OG0017334	other	
+CYP	OG0017595	other	
+CYP	OG0017829	other	
+CYP	OG0018290	other	
+CYP	OG0018772	other	
+CYP	OG0018848	other	
+CYP	OG0019527	other	
+CYP	OG0019892	other	
+CYP	OG0021160	other	
+CYP	OG0022723	other	
+CYP	OG0023024	other	
+CYP	OG0024195	other	
+CYP	OG0025487	other	
+CYP	OG0026267	other	
+CYP	OG0026316	other	
+Catalase	OG0000338	expanded	max_copy>=5
+Catalase	OG0005564	expanded	max_copy>=5
+EH	OG0000097	expanded	max_copy>=5
+EH	OG0000119	other	
+EH	OG0000387	expanded	max_copy>=5
+EH	OG0000449	other	
+EH	OG0000744	expanded	max_copy>=5
+EH	OG0000773	other	
+EH	OG0001526	other	
+EH	OG0002219	expanded	max_copy>=5
+EH	OG0002398	other	
+EH	OG0002643	other	
+EH	OG0003613	other	
+EH	OG0004150	other	
+EH	OG0004413	expanded	max_copy>=5
+EH	OG0004932	other	
+EH	OG0005360	other	
+EH	OG0007586	other	
+EH	OG0008020	other	
+EH	OG0008045	other	
+EH	OG0008059	other	
+EH	OG0008228	other	
+EH	OG0008490	other	
+EH	OG0008849	other	
+EH	OG0009308	other	
+EH	OG0009489	other	
+EH	OG0011617	other	
+EH	OG0012841	other	
+EH	OG0014366	other	
+EH	OG0015351	other	
+EH	OG0015383	other	
+EH	OG0015480	other	
+EH	OG0015581	other	
+EH	OG0021451	other	
+FMO	OG0001389	other	
+FMO	OG0002649	other	
+FMO	OG0006768	other	
+FMO	OG0014396	expanded	max_copy>=5
+FMO	OG0014869	other	
+FMO	OG0017209	other	
+FMO	OG0019338	other	
+GST_C	OG0000180	other	
+GST_C	OG0001303	expanded	max_copy>=5
+GST_C	OG0001335	other	
+GST_C	OG0002343	other	
+GST_C	OG0002392	other	
+GST_C	OG0003291	other	
+GST_C	OG0003407	other	
+GST_C	OG0003827	other	
+GST_C	OG0004889	other	
+GST_C	OG0004890	other	
+GST_C	OG0004952	other	
+GST_C	OG0006439	other	
+GST_C	OG0006975	other	
+GST_C	OG0019908	other	
+GST_N	OG0000106	other	
+GST_N	OG0000180	other	
+GST_N	OG0001335	other	
+GST_N	OG0001785	other	
+GST_N	OG0001997	other	
+GST_N	OG0002343	other	
+GST_N	OG0003002	other	
+GST_N	OG0003291	other	
+GST_N	OG0004411	other	
+GST_N	OG0004889	other	
+GST_N	OG0004952	other	
+GST_N	OG0021553	other	
+GST_strict	OG0004952	other	
+Keap1_BACK	OG0000567	other	
+Keap1_BACK	OG0001022	other	
+Keap1_BACK	OG0002568	other	
+Keap1_BACK	OG0002711	other	
+Keap1_BACK	OG0002858	other	
+Keap1_BACK	OG0003374	other	
+Keap1_BACK	OG0003737	other	
+Keap1_BACK	OG0003903	other	
+Keap1_BACK	OG0004067	other	
+Keap1_BTB	OG0000364	other	
+Keap1_BTB	OG0000567	other	
+Keap1_BTB	OG0000735	other	
+Keap1_BTB	OG0000891	other	
+Keap1_BTB	OG0000949	other	
+Keap1_BTB	OG0001056	other	
+Keap1_BTB	OG0001360	other	
+Keap1_BTB	OG0001417	other	
+Keap1_BTB	OG0001652	other	
+Keap1_BTB	OG0001759	other	
+Keap1_BTB	OG0001760	other	
+Keap1_BTB	OG0002298	other	
+Keap1_BTB	OG0002373	other	
+Keap1_BTB	OG0002431	other	
+Keap1_BTB	OG0002477	other	
+Keap1_BTB	OG0002520	other	
+Keap1_BTB	OG0002568	other	
+Keap1_BTB	OG0002676	other	
+Keap1_BTB	OG0002711	other	
+Keap1_BTB	OG0002858	other	
+Keap1_BTB	OG0002885	other	
+Keap1_BTB	OG0003072	other	
+Keap1_BTB	OG0003374	other	
+Keap1_BTB	OG0003432	other	
+Keap1_BTB	OG0003737	other	
+Keap1_BTB	OG0003755	other	
+Keap1_BTB	OG0003806	other	
+Keap1_BTB	OG0003903	other	
+Keap1_BTB	OG0003946	other	
+Keap1_BTB	OG0004067	other	
+Keap1_BTB	OG0004383	other	
+Keap1_BTB	OG0004385	other	
+Keap1_BTB	OG0005007	other	
+Keap1_BTB	OG0005223	other	
+Keap1_BTB	OG0005606	expanded	max_copy>=5
+Keap1_BTB	OG0005768	other	
+Keap1_BTB	OG0005991	other	
+Keap1_BTB	OG0006368	other	
+Keap1_BTB	OG0007261	other	
+Keap1_BTB	OG0007551	other	
+Keap1_BTB	OG0007957	other	
+Keap1_BTB	OG0008202	other	
+Keap1_BTB	OG0008713	other	
+Keap1_BTB	OG0008887	other	
+Keap1_BTB	OG0010871	other	
+Keap1_BTB	OG0011631	other	
+Keap1_BTB	OG0012116	other	
+Keap1_BTB	OG0012340	other	
+Keap1_BTB	OG0012352	other	
+Keap1_BTB	OG0012536	other	
+Keap1_BTB	OG0013816	other	
+Keap1_BTB	OG0015671	other	
+Keap1_BTB	OG0015677	other	
+Keap1_BTB	OG0018831	other	
+Keap1_BTB	OG0019642	other	
+Keap1_BTB	OG0021163	other	
+Keap1_BTB	OG0022075	other	
+Keap1_BTB	OG0022508	other	
+Keap1_BTB	OG0024332	other	
+Keap1_BTB	OG0024420	other	
+Keap1_BTB	OG0024624	other	
+Keap1_Kelch	OG0000567	other	
+Keap1_Kelch	OG0002711	other	
+Keap1_Kelch	OG0005223	other	
+Keap1_Kelch	OG0005768	other	
+Keap1_Kelch	OG0009405	other	
+Nuclear_receptor_DBD	OG0000061	other	
+Nuclear_receptor_DBD	OG0002235	other	
+Nuclear_receptor_DBD	OG0002687	other	
+Nuclear_receptor_DBD	OG0003980	other	
+Nuclear_receptor_DBD	OG0005397	other	
+Nuclear_receptor_DBD	OG0005457	other	
+Nuclear_receptor_DBD	OG0006579	other	
+Nuclear_receptor_DBD	OG0007453	other	
+Nuclear_receptor_DBD	OG0009715	other	
+Nuclear_receptor_DBD	OG0012969	other	
+Nuclear_receptor_DBD	OG0018316	other	
+Nuclear_receptor_LBD	OG0000684	other	
+Nuclear_receptor_LBD	OG0000883	other	
+Nuclear_receptor_LBD	OG0000915	other	
+Nuclear_receptor_LBD	OG0001039	other	
+Nuclear_receptor_LBD	OG0001532	other	
+Nuclear_receptor_LBD	OG0002235	expanded	max_copy>=5
+Nuclear_receptor_LBD	OG0002519	other	
+Nuclear_receptor_LBD	OG0002687	other	
+Nuclear_receptor_LBD	OG0002823	other	
+Nuclear_receptor_LBD	OG0003813	other	
+Nuclear_receptor_LBD	OG0003819	other	
+Nuclear_receptor_LBD	OG0003980	conserved	presence_frac>=0.8 & median~1 & max<=2
+Nuclear_receptor_LBD	OG0004976	other	
+Nuclear_receptor_LBD	OG0005457	other	
+Nuclear_receptor_LBD	OG0006579	other	
+Nuclear_receptor_LBD	OG0009593	other	
+Nuclear_receptor_LBD	OG0009715	other	
+Nuclear_receptor_LBD	OG0013955	other	
+Nuclear_receptor_LBD	OG0017037	other	
+Nuclear_receptor_LBD	OG0017565	other	
+Nuclear_receptor_LBD	OG0024103	other	
+PAS	OG0000420	other	
+PAS	OG0001745	other	
+PAS	OG0004197	other	
+PAS	OG0013609	other	
+PAS	OG0017272	other	
+PAS	OG0019405	other	
+PAS_2	OG0001609	other	
+PAS_2	OG0002626	other	
+Peroxiredoxin	OG0002487	other	
+Peroxiredoxin	OG0008718	other	
+Peroxiredoxin	OG0009102	other	
+Peroxiredoxin	OG0009263	conserved	presence_frac>=0.8 & median~1 & max<=2
+Peroxiredoxin	OG0022414	other	
+SOD_CuZn	OG0001345	other	
+SOD_CuZn	OG0002102	other	
+SOD_CuZn	OG0004438	expanded	max_copy>=5
+SOD_CuZn	OG0006913	other	
+SULT	OG0000009	other	
+SULT	OG0000084	expanded	max_copy>=5
+SULT	OG0001231	expanded	max_copy>=5
+SULT	OG0002893	other	
+SULT	OG0002981	other	
+SULT	OG0005480	other	
+SULT	OG0005589	expanded	max_copy>=5
+SULT	OG0006272	other	
+SULT	OG0006690	other	
+SULT	OG0008776	conserved	presence_frac>=0.8 & median~1 & max<=2
+SULT	OG0011855	other	
+SULT	OG0011866	other	
+SULT	OG0012623	expanded	max_copy>=5
+SULT	OG0012645	other	
+SULT	OG0015201	other	
+SULT	OG0017585	other	
+SULT	OG0018516	other	
+SULT	OG0018824	other	
+SULT	OG0019624	other	
+SULT	OG0020714	other	
+SULT	OG0021551	other	
+SULT	OG0025952	other	
+SULT	OG0026169	other	
+Thioredoxin	OG0001248	other	
+Thioredoxin	OG0002684	conserved	presence_frac>=0.8 & median~1 & max<=2
+Thioredoxin	OG0003001	other	
+Thioredoxin	OG0003512	conserved	presence_frac>=0.8 & median~1 & max<=2
+Thioredoxin	OG0003643	other	
+Thioredoxin	OG0004096	other	
+Thioredoxin	OG0004249	other	
+Thioredoxin	OG0004452	other	
+Thioredoxin	OG0004998	other	
+Thioredoxin	OG0005803	other	
+Thioredoxin	OG0006031	other	
+Thioredoxin	OG0006415	other	
+Thioredoxin	OG0006630	conserved	presence_frac>=0.8 & median~1 & max<=2
+Thioredoxin	OG0006866	other	
+Thioredoxin	OG0008571	other	
+Thioredoxin	OG0008607	conserved	presence_frac>=0.8 & median~1 & max<=2
+Thioredoxin	OG0009309	other	
+Thioredoxin	OG0009431	conserved	presence_frac>=0.8 & median~1 & max<=2
+Thioredoxin	OG0014721	other	
+UGT	OG0000005	expanded	max_copy>=5
+UGT	OG0000017	expanded	max_copy>=5
+UGT	OG0000238	expanded	max_copy>=5
+UGT	OG0000546	expanded	max_copy>=5
+UGT	OG0000608	expanded	max_copy>=5
+UGT	OG0001029	expanded	max_copy>=5
+UGT	OG0002155	other	
+UGT	OG0003400	expanded	max_copy>=5
+UGT	OG0005647	other	
+UGT	OG0005770	other	
+UGT	OG0008476	expanded	max_copy>=5
+UGT	OG0008892	conserved	presence_frac>=0.8 & median~1 & max<=2
+UGT	OG0009553	other	
+UGT	OG0009915	other	
+UGT	OG0010107	other	
+UGT	OG0011309	other	
+UGT	OG0011711	other	
+UGT	OG0013092	other	
+UGT	OG0013305	other	
+UGT	OG0014535	other	
+UGT	OG0015134	other	
+UGT	OG0015627	other	
+UGT	OG0019072	other	
+UGT	OG0019350	other	
+UGT	OG0020065	other	
+UGT	OG0020283	other	
+UGT	OG0020859	other	
+UGT	OG0020864	other	
+UGT	OG0021875	other	
+UGT	OG0024077	other	
+UGT	OG0026038	other	
+UGT	OG0026326	other	
+bHLH	OG0000765	other	
+bHLH	OG0000921	other	
+bHLH	OG0001000	other	
+bHLH	OG0002177	other	
+bHLH	OG0002212	other	
+bHLH	OG0002702	other	
+bHLH	OG0003433	other	
+bHLH	OG0003872	other	
+bHLH	OG0004348	other	
+bHLH	OG0004426	other	
+bHLH	OG0004639	other	
+bHLH	OG0005233	other	
+bHLH	OG0005631	other	
+bHLH	OG0006245	other	
+bHLH	OG0006458	other	
+bHLH	OG0006772	other	
+bHLH	OG0007200	other	
+bHLH	OG0007625	other	
+bHLH	OG0007910	other	
+bHLH	OG0008613	expanded	max_copy>=5
+bHLH	OG0008722	other	
+bHLH	OG0008763	other	
+bHLH	OG0009055	other	
+bHLH	OG0009197	other	
+bHLH	OG0009690	other	
+bHLH	OG0009770	other	
+bHLH	OG0010751	other	
+bHLH	OG0012649	other	
+bHLH	OG0012650	other	
+bHLH	OG0012957	other	
+bHLH	OG0017272	other	
