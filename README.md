@@ -8,8 +8,6 @@ This pipeline performs systematic identification, quantification, and phylogenet
 
 ---
 
-## Biological Rationale
-
 ### The Defensome Concept
 
 Insects encounter diverse toxic compounds from host plants (alkaloids, glucosinolates, furanocoumarins) and anthropogenic sources (insecticides). The "defensome" refers to the integrated network of genes that detect, metabolize, and excrete these xenobiotics:
