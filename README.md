@@ -3,15 +3,6 @@
 Comparative chemical defensome annotation from proteomes. One Python file, no
 install, and a single command from a directory of proteomes to an interactive
 dashboard.
-
-Built for a specific problem that most comparative-genomics pipelines ignore:
-**gene-family counts are not comparable across proteomes until you control for
-how each proteome was made.** A transcriptome assembly counts isoforms, a
-genome annotation counts genes, and a de novo assembly only sees what was
-expressed. This pipeline measures that difference rather than absorbing it.
-
-[![CI](https://github.com/krishnan-Rama/DEFENSOME/actions/workflows/ci.yml/badge.svg)](https://github.com/krishnan-Rama/DEFENSOME/actions)
-
 ---
 
 ## Quick start
