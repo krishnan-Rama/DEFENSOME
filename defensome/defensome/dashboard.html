@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Defensome dashboard</title>
+<style>
+:root{--bg:#fbfbfc;--panel:#fff;--ink:#1c1f23;--mut:#6b7280;--line:#e3e6ea;
+--acc:#1b4965;--warm:#bc4749;--ok:#2a9d8f;--warn:#e9a13b}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+background:var(--bg);color:var(--ink)}
+header{background:var(--acc);color:#fff;padding:14px 20px;display:flex;
+align-items:baseline;gap:16px;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:600}
+header .sub{font-size:12px;opacity:.8}
+nav{display:flex;gap:2px;background:#fff;border-bottom:1px solid var(--line);
+padding:0 12px;overflow-x:auto}
+nav button{background:none;border:none;padding:11px 14px;cursor:pointer;font-size:13px;
+color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap}
+nav button:hover{color:var(--ink);background:#f4f6f8}
+nav button.on{color:var(--acc);border-bottom-color:var(--acc);font-weight:600}
+main{padding:18px 20px 60px;max-width:1700px;margin:0 auto}
+.tab{display:none}.tab.on{display:block}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+padding:16px;margin-bottom:16px}
+.panel h2{margin:0 0 4px;font-size:15px}
+.panel .hint{color:var(--mut);font-size:12px;margin:0 0 12px}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.ctl{display:flex;flex-direction:column;gap:3px}
+.ctl label{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+select,input[type=text],input[type=search]{padding:6px 9px;border:1px solid var(--line);
+border-radius:5px;font-size:13px;background:#fff;min-width:150px;font-family:inherit}
+button.act{padding:6px 12px;border:1px solid var(--line);background:#fff;border-radius:5px;
+cursor:pointer;font-size:12.5px}
+button.act:hover{background:#f0f3f6}
+button.act.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{padding:3px 9px;border:1px solid var(--line);border-radius:12px;font-size:11.5px;
+cursor:pointer;background:#fff;user-select:none}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{padding:5px 9px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:#f6f8fa;position:sticky;top:0;cursor:pointer;font-weight:600;z-index:2}
+th:hover{background:#eef2f6}
+tbody tr:hover{background:#f7fafc}
+.scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.kpi .v{font-size:22px;font-weight:600;color:var(--acc)}
+.kpi .l{font-size:11.5px;color:var(--mut)}
+.tip{position:absolute;pointer-events:none;background:#1c1f23;color:#fff;padding:6px 9px;
+border-radius:5px;font-size:12px;opacity:0;transition:opacity .08s;z-index:99;max-width:320px}
+.badge{padding:1px 7px;border-radius:9px;font-size:11px;font-weight:600}
+.b-ok{background:#e3f4f1;color:#1d6f64}.b-bad{background:#fbe6e6;color:#9b2c2c}
+.b-warn{background:#fdf1de;color:#8a5a10}
+canvas{display:block;max-width:100%}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin-top:8px}
+.legend span{display:flex;align-items:center;gap:5px}
+.sw{width:12px;height:12px;border-radius:2px;display:inline-block}
+.note{font-size:12px;color:var(--mut);background:#f6f8fa;border-left:3px solid var(--acc);
+padding:8px 12px;border-radius:0 5px 5px 0;margin:10px 0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px}
+</style></head><body>
+<header><h1>Defensome dashboard</h1>
+<span class="sub" id="hdr"></span></header>
+<nav id="nav"></nav>
+<main>
+ <section class="tab" id="t-overview"></section>
+ <section class="tab" id="t-heatmap"></section>
+ <section class="tab" id="t-family"></section>
+ <section class="tab" id="t-species"></section>
+ <section class="tab" id="t-ordination"></section>
+ <section class="tab" id="t-correlation"></section>
+ <section class="tab" id="t-domains"></section>
+ <section class="tab" id="t-clans"></section>
+ <section class="tab" id="t-amethods"></section>
+ <section class="tab" id="t-trees"></section>
+ <section class="tab" id="t-data"></section>
+ <section class="tab" id="t-compare"></section>
+ <section class="tab" id="t-stats"></section>
+ <section class="tab" id="t-methods"></section>
+ <section class="tab" id="t-map"></section>
+</main>
+<div class="tip" id="tip"></div>
+<script>
+const D = /*__PAYLOAD__*/null;
+</script>
+<script>
+/*__JS__*/
+</script>
+</body></html>

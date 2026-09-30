@@ -1,0 +1,14 @@
+# conda env create -f envs/environment.yml && conda activate defensome
+name: defensome
+channels: [conda-forge, bioconda]
+dependencies:
+  - python>=3.9
+  - pandas
+  - numpy
+  - scipy          # optional: group tests
+  - matplotlib     # optional: figures
+  - openpyxl       # optional: reading .xlsx metadata
+  - hmmer>=3.3     # required for `scan`
+  - mafft>=7.4     # required for `cyp` and `trees`
+  - fasttree       # required for `trees`
+  - cd-hit         # optional: reference redundancy reduction
