@@ -1,8 +1,6 @@
 # defensome
 
-Comparative chemical defensome annotation from proteomes. One Python file, no
-install, and a single command from a directory of proteomes to an interactive
-dashboard.
+Comparative chemical defensome annotation from proteomes.
 ---
 
 ## Quick start
